@@ -1,64 +1,64 @@
-# Migrasi Backend Go — Rencana & Pelacak Fase Cutover per Modul
+# Go Backend Migration — Plan & Phase Tracker of the Per-Module Cutover
 
-> Sumber rencana: `docs/ARSITEKTUR-BACKEND-GO.md` §8 (tabel fase G0–G7) —
-> dokumen ini MENURUNKANNYA, tidak mengarang fase baru; konstitusi = dokumen
-> itu. Eksekusi per fase lewat skill `backend-go-scaffold-implementator`
-> (Mode F fondasi, Mode G migrasi/generate modul, Mode K koreksi paritas);
-> dokumen ini rencana & pelacak — **bukan** artefak eksekusi.
-> Aturan pemeliharaan: setiap fase modul selesai, baris statusnya WAJIB
-> diperbarui (✅ + tanggal) + path bukti di §5 Log pada hari yang sama.
-> Status tanpa bukti = belum selesai.
-> Pelacak migrasi Dexie→NestJS ada terpisah di `nexierp/docs/MIGRASI-BACKEND.md`
-> — dua migrasi, dua dokumen, TIDAK dicampur.
+> Plan source: `docs/ARSITEKTUR-BACKEND-GO.md` §8 (the G0–G7 phase table) —
+> this document DERIVES from it and invents no new phases; the constitution is
+> that document. Phase execution goes through the `backend-go-scaffold-implementator`
+> skill (Mode F foundation, Mode G module migration/generation, Mode K parity fix);
+> this document is the plan & tracker — **not** an execution artifact.
+> Maintenance rule: whenever a module phase completes, its status row MUST
+> be updated (✅ + date) + the evidence path in the §5 Log on the same day.
+> Status without evidence = not done.
+> The Dexie→NestJS migration tracker lives separately in `nexierp/docs/MIGRASI-BACKEND.md`
+> — two migrations, two documents, NOT mixed.
 
-## 1. Keputusan Terkunci (dari §0–§8 ARSITEKTUR-BACKEND-GO.md, diratifikasi 2026-11-27)
+## 1. Locked Decisions (from §0–§8 of ARSITEKTUR-BACKEND-GO.md, ratified 2026-11-27)
 
-| Keputusan | Isi |
+| Decision | Content |
 |---|---|
-| Satu PostgreSQL dua runtime | Go konek DB `nexierp` yang sama; cutover = pindah ROUTE per modul via gateway/proxy, bukan pindah data; dilarang DB baru |
-| Kontrak kawat beku | prefix `/api`, envelope `{success, data?, error?}`, kode izin `{modul}.{fitur}.{handler}`, kode error domain, camelCase, `If-Match`/`Idempotency-Key` — PERSIS NestJS; selisih = Mode K |
-| Modul pertama | **core (system)** — kernel; TAPI fondasi G0 sudah memindahkan route `/api/auth/*` + realtime ke Go (ratifikasi §0 konstitusi) |
-| Realtime | **Pindah sejak G0** — socket.io NestJS mati di G0; hub WS Go `internal/core/realtime` (event `rbac.changed`); FE ganti client 1 file |
-| Kontrak skema | zod `@nexierp/schemas` tetap sumber FE; generator JSON Schema baru (`tools/json-schema-gen`) → `api/json-schema/`; kontrak baru per modul `api/openapi/<m>.yaml` |
-| Auth parity | secret/klaim/`core_sessions` (acuan bentuk = Drizzle live)/cookie dua ruang/argon2 dipakai bersama; token lintas-runtime sah |
-| Urutan modul | core → inv → sls → purchasing → pos → fnb → ai → ecom → acc → hr → pgw → shipment → wa → wf (14 modul, "Peta + ai-naik"); pengecualian = keputusan user dicatat di Log |
-| Job & listener saat cutover | job BullMQ NestJS + konsumen outbox in-process modul tsb dimatikan di G5; Go worker (asynq) ambil alih — CFG key, topik, `_key` idempoten sama |
-| Dekomisioning | G7: NestJS API + worker Node dimatikan penuh SETELAH semua modul G6 ✅ |
+| One PostgreSQL, two runtimes | Go connects to the same `nexierp` DB; cutover = moving ROUTES per module via gateway/proxy, never moving data; a new DB is forbidden |
+| Frozen wire contract | prefix `/api`, envelope `{success, data?, error?}`, permission codes `{modul}.{fitur}.{handler}`, domain error codes, camelCase, `If-Match`/`Idempotency-Key` — EXACTLY NestJS; drift = Mode K |
+| First module | **core (system)** — the kernel; BUT the G0 foundation already moved the `/api/auth/*` routes + realtime to Go (constitution §0 ratification) |
+| Realtime | **Moved as of G0** — NestJS socket.io dies at G0; Go WS hub `internal/core/realtime` (event `rbac.changed`); FE swaps in a 1-file client |
+| Schema contract | zod `@nexierp/schemas` stays the FE source; new JSON Schema generator (`tools/json-schema-gen`) → `api/json-schema/`; new per-module contracts in `api/openapi/<m>.yaml` |
+| Auth parity | secrets/claims/`core_sessions` (shape reference = Drizzle live)/dual-space cookies/argon2 all shared; tokens valid cross-runtime |
+| Module order | core → inv → sls → purchasing → pos → fnb → ai → ecom → acc → hr → pgw → shipment → wa → wf (14 modules, "Peta + ai-naik"); exceptions = user decisions recorded in the Log |
+| Jobs & listeners at cutover | the module's NestJS BullMQ jobs + in-process outbox consumers are switched off at G5; the Go worker (asynq) takes over — same CFG keys, topics, `_key` idempotency |
+| Decommissioning | G7: the NestJS API + Node worker are fully switched off AFTER all modules are G6 ✅ |
 
-## 2. Definisi Selesai per Fase (berlaku seragam; eksekutor: `backend-go-scaffold-implementator`)
+## 2. Definition of Done per Phase (applies uniformly; executor: `backend-go-scaffold-implementator`)
 
-| Fase | Selesai bila | Mode | Bukti wajib |
+| Phase | Done when | Mode | Mandatory evidence |
 |---|---|---|---|
-| G0 Fondasi (SEKALI) | Scaffold §3 konstitusi utuh; `internal/core/*` lengkap; goose atas `ddl/` identik; route `/api/auth/*` dicutover ke Go; socket.io NestJS mati, hub WS Go hidup; generator JSON Schema jalan | F | (a) login via Go = JWT sah di NestJS & FE; (b) 403 RBAC parity; (c) outbox Go terbaca konsumen NestJS; (d) schema goose ≡ `ddl/`; (e) FE terima `rbac.changed` dari WS Go |
-| G1 Audit (per modul) | Peta READ-ONLY modul NestJS tersusun: endpoint+izin+kontrak+error+tx+If-Match/Idem+job/listener/adapter+domain per fitur; TANPA mengubah kode | G | dokumen audit modul (path di Log) |
-| G2 Kontrak (per modul) | `api/openapi/<m>.yaml` lengkap SEMUA endpoint modul; JSON Schema payload event/listener modul tersedia | G | file yaml + daftar endpoint ≡ peta G1 (0 selisih) |
-| G3 Generate (per modul) | Pohon `internal/modules/<m>/` utuh per fitur (fitur pindah UTUH atau belum); build+test hijau per langkah; guard 0 MERAH | G | output `go build ./... && go test ./...` + guard --strict |
-| G4 Parity (per modul) | Gerbang P1–P9 lolos semua (endpoint, kontrak, error, RBAC, bentuk data, pagination, efek samping lintas-runtime, vet/test, smoke FE) | G + `regression-gate` (P9) | laporan P1–P9 (path di Log) |
-| G5 Cutover (per modul) | Route modul dialihkan gateway ke Go **DAN** job/listener NestJS modul mati **DAN** FE jalan normal lewat route Go — bukan sekadar "route sudah dialihkan" | G + `release-deploy`/`devops-runner` | hasil parity G4 + catatan uji FE lewat route Go + bukti job Go jalan |
-| G6 Finalize (per modul) | Route NestJS modul DIHAPUS (bukan hanya dimatikan); rekap pemetaan endpoint→handler + tabel K + koreksi paritas | G | diff penghapusan + rekap ke user |
-| G7 Dekomisioning (SEKALI) | NestJS API & worker Node dimatikan penuh; FE penuh lewat Go; realtime penuh WS Go | — | catatan shutdown + smoke FE penuh |
+| G0 Foundation (ONCE) | The §3 scaffold of the constitution is complete; `internal/core/*` complete; goose over `db/migrations` (content = live-sourced `ddl/` — new policy 2026-11-27, see the Log); the `/api/auth/*` routes cut over to Go; NestJS socket.io dead, Go WS hub alive; the JSON Schema generator running | F | (a) login via Go = JWT valid in NestJS & FE; (b) 403 RBAC parity; (c) the Go outbox read by the NestJS consumer; (d) goose schema ≡ live (0-delta parity); (e) FE receives `rbac.changed` from the Go WS |
+| G1 Audit (per module) | A READ-ONLY map of the NestJS module assembled: endpoints+permissions+contracts+errors+tx+If-Match/Idem+job/listener/adapter+domain per feature; WITHOUT changing code | G | module audit document (path in the Log) |
+| G2 Contract (per module) | `api/openapi/<m>.yaml` complete with ALL module endpoints; the module's event/listener payload JSON Schemas available | G | yaml file + endpoint list ≡ G1 map (0 drift) |
+| G3 Generate (per module) | The `internal/modules/<m>/` tree complete per feature (a feature moves WHOLE or not at all); build+test green per step; guard 0 RED | G | `go build ./... && go test ./...` output + guard --strict |
+| G4 Parity (per module) | The P1–P9 gates all pass (endpoints, contract, errors, RBAC, data shape, pagination, cross-runtime side effects, vet/test, FE smoke) | G + `regression-gate` (P9) | P1–P9 report (path in the Log) |
+| G5 Cutover (per module) | The module's routes redirected by the gateway to Go **AND** the module's NestJS jobs/listeners dead **AND** the FE running normally through the Go routes — not merely "routes redirected" | G + `release-deploy`/`devops-runner` | G4 parity result + FE test notes through the Go routes + evidence the Go jobs run |
+| G6 Finalize (per module) | The module's NestJS routes DELETED (not just disabled); endpoint→handler mapping recap + table K + parity fixes | G | deletion diff + recap to the user |
+| G7 Decommissioning (ONCE) | The NestJS API & Node worker fully switched off; the FE fully through Go; realtime fully the Go WS | — | shutdown notes + full FE smoke |
 
-Gerbang: fase berikutnya dilarang mulai sebelum fase sebelumnya ✅ (per
-modul); G5 dilarang sebelum G4 ✅; G7 dilarang sebelum SEMUA modul G6 ✅;
-urutan modul mengikuti §1 (pengecualian hanya keputusan user di Log).
-Alur lintas-modul selama transisi: efek samping lintas-runtime diuji di P7
-tiap modul (outbox/audit/numbering lintas NestJS↔Go).
+Gates: the next phase is forbidden to start before the previous one is ✅ (per
+module); G5 is forbidden before G4 ✅; G7 is forbidden before ALL modules are G6 ✅;
+the module order follows §1 (exceptions only via user decisions in the Log).
+Cross-module flows during the transition: cross-runtime side effects are
+tested at P7 of every module (outbox/audit/numbering across NestJS↔Go).
 
-## 3. Matriks Status (pelacak)
+## 3. Status Matrix (tracker)
 
-Legenda: ⬜ belum mulai · 🔧 berjalan · ✅ selesai (tanggal + path bukti di Log)
+Legend: ⬜ not started · 🔧 in progress · ✅ done (date + evidence path in the Log)
 
-**G0 Fondasi (bersama, di atas matriks): ✅ 2026-11-27** — padanan kernel NestJS
-`src/core/*` + route `/api/auth/*` + hub WS Go. Bukti wajib 5 butir §2:
-`docs/bukti-g0/README.md` (a: login lintas-runtime 2 arah ✅ · b: 403 RBAC
-parity problem+json identik ✅ · c: outbox Go idempoten + terbaca sisi NestJS ✅ ·
-d: schema goose ≡ live, 47 tabel core_* ✅ · e: frame `rbac.changed` via WS Go,
-FE client diganti ✅). Commit: `1834170` (fondasi) + `c2a0b01` (bukti).
+**G0 Foundation (shared, above the matrix): ✅ 2026-11-27** — counterpart of the NestJS kernel
+`src/core/*` + the `/api/auth/*` routes + the Go WS hub. The 5 mandatory evidence items of §2:
+`docs/bukti-g0/README.md` (a: cross-runtime login, both directions ✅ · b: 403 RBAC
+parity with identical problem+json ✅ · c: Go outbox idempotent + read by the NestJS side ✅ ·
+d: goose schema ≡ live, 47 `core_*` tables ✅ · e: `rbac.changed` frame via the Go WS,
+FE client swapped ✅). Commits: `1834170` (foundation) + `c2a0b01` (evidence).
 
-| Modul | Peringkat | G1 | G2 | G3 | G4 | G5 | G6 | Bukti terakhir |
+| Module | Rank | G1 | G2 | G3 | G4 | G5 | G6 | Latest evidence |
 |---|---|---|---|---|---|---|---|---|
-| core (system)¹ | 1 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 (36/38+2 artefak dist basi) | ⏸ ditunda | ⬜ | bukti: docs/bukti-g0/p2-parity.txt + p1-scanroute-core.txt |
-| inv | 2 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 (sampel live byte-identical; 404-edge parity ditambah) | ⏸ ditunda | ⬜ | bukti: docs/bukti-g0/p1-scanroute-inv.txt (GO-ONLY 0) |
+| core (system)¹ | 1 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 (36/38 + 2 stale dist artifacts) | ⏸ postponed | ⬜ | evidence: docs/bukti-g0/p2-parity.txt + p1-scanroute-core.txt |
+| inv | 2 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 | ✅ 27-11 (live sample byte-identical; 404-edge parity added) | ⏸ postponed | ⬜ | evidence: docs/bukti-g0/p1-scanroute-inv.txt (GO-ONLY 0) |
 | sls | 3 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | — |
 | purchasing | 4 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | — |
 | pos | 5 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | — |
@@ -72,48 +72,49 @@ FE client diganti ✅). Commit: `1834170` (fondasi) + `c2a0b01` (bukti).
 | wa | 13 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | — |
 | wf | 14 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | — |
 
-¹ Endpoint modul core (system): 130 — iam/routes/permissions/menus/features/
+¹ core (system) module endpoints: 130 — iam/routes/permissions/menus/features/
 user-overrides/datascope, rbac/users/roles/modules/overview, security/
 audit-trail/environment, files, tenants, wilayah+wilayah_admin, cluster,
-agama. Bagian yang TIDAK termasuk G0 (kernel) dicutover di baris ini.
+agama. The parts NOT included in G0 (the kernel) are cut over in this row.
 
-**G7 Dekomisioning: ⬜** — dilarang sebelum keempat belas modul G6 ✅.
+**G7 Decommissioning: ⬜** — forbidden before all fourteen modules are G6 ✅.
 
-Status awal (2026-11-27): repo Go kosong total (tidak ada go.mod/kode/test)
-— SEMUA fase ⬜ termasuk G0; tidak ada ✅ tanpa bukti. Prasyarat yang SUDAH
-terjadi: `AGENTS.md` + konstitusi `docs/ARSITEKTUR-BACKEND-GO.md` +
-ratifikasi 4 keputusan (Log §5). Toolchain Go 1.24.2 tersedia.
+Initial status (2026-11-27): the Go repo was completely empty (no go.mod/code/tests)
+— ALL phases ⬜ including G0; no ✅ without evidence. Prerequisites ALREADY
+met: `AGENTS.md` + the `docs/ARSITEKTUR-BACKEND-GO.md` constitution +
+ratification of 4 decisions (Log §5). Go toolchain 1.24.2 available.
 
-## 4. Cara Memakai Dokumen Ini
+## 4. How to Use This Document
 
-1. Mulai modul: sebut `backend-go-scaffold-implementator` — ia membaca
-   posisi dari matriks ini (Mode F untuk G0; Mode G per modul; Mode K untuk
-   koreksi paritas pasca-cutover).
-2. Setiap fase selesai: perbarui sel matriks (✅ + tanggal), baris G0/G7,
-   dan tambahkan path bukti di §5 Log — di sesi yang sama.
-3. Fase berikutnya dilarang mulai sebelum fase sebelumnya ✅ (gerbang §2).
-4. Selisih fakta konstitusi vs repo (mis. ddl-vs-live lagi) = catat di Log,
-   keputusan stack baru = ubah ARSITEKTUR-BACKEND-GO.md dulu dengan
-   ratifikasi user.
+1. Start a module: invoke `backend-go-scaffold-implementator` — it reads its
+   position from this matrix (Mode F for G0; Mode G per module; Mode K for
+   post-cutover parity fixes).
+2. Every phase done: update the matrix cell (✅ + date), the G0/G7 rows,
+   and add the evidence path in the §5 Log — in the same session.
+3. The next phase is forbidden to start before the previous one is ✅ (§2 gates).
+4. Constitution-vs-repo fact drift (e.g. ddl-vs-live again) = record it in the Log;
+   a new stack decision = change ARSITEKTUR-BACKEND-GO.md first with
+   user ratification.
 
-## 5. Log Keputusan & Bukti
+## 5. Decision & Evidence Log
 
-| Tanggal | Keputusan / bukti | Dampak |
+| Date | Decision / evidence | Impact |
 |---|---|---|
-| 2026-11-27 | Ratifikasi user (4 keputusan): realtime pindah sejak G0; kontrak skema = zod sumber FE + JSON Schema generator baru + OpenAPI-first per modul; auth parity + login dicutover G0 (acuan `core_sessions` = Drizzle live); urutan modul "Peta + ai-naik" (14 modul) | G0 memuat cutover `/api/auth/*` + WS; urutan matriks §3 terkunci |
-| 2026-11-27 | `AGENTS.md` repo Go dibuat (bukti: `/Data/www/nexierp-golang/AGENTS.md`) — kalibrasi disiplin NestJS L0–L3 | prasyarat 1 skill terpenuhi |
-| 2026-11-27 | Konstitusi `docs/ARSITEKTUR-BACKEND-GO.md` dibuat dari inventaris 3 sub-agent (14 modul, 1.046 endpoint, 10 job, 7 adapter, 47 titik enqueue, realtime 1 event, auth custom JWT) (bukti: `/Data/www/nexierp-golang/docs/ARSITEKTUR-BACKEND-GO.md`) | prasyarat 2 skill terpenuhi; sumber §8 pelacak ini |
-| 2026-11-27 | Fakta awal: repo Go kosong total; template `MIGRASI-BACKEND-GO.md` tidak ada di skill `migrasi-backend-plan` (struktur diturunkan dari `MIGRASI-BACKEND.md`); koreksi fakta: modul lama TIDAK dihapus, `@RequirePermission` 0 pemakai (RBAC route-centric), konsumsi outbox = polling eksplisit | semua status ⬜; G0 belum mulai |
-| 2026-11-27 | Ratifikasi tambahan dari user: pola route/URL/permission NestJS ↔ Go WAJIB 1:1 dengan **NestJS sebagai sumber pola** (`core_routes` live = kanonik) agar FE tidak berubah; `cmd/scanroute` = parity-scanner (merge-only, tanpa delete/update baris NestJS sampai G7) | konstitusi §0+§7 diamandemen; P1/P4 parity membandingkan ke baris live |
-| 2026-11-27 | **G0 dieksekusi (Mode F)**: 5 sub-agent generate + wiring `internal/app`; build/vet/gofmt/test hijau; guard `--strict` 0 MERAH; sqlc 9 package dari `db/schema.sql`; `cmd/scanroute` parity-scanner diuji ke live (MATCH 1, GO-ONLY 0, LIVE-ONLY 1045, DIFF 8 = label kode `auth.auth.controllers.*` kanonik live vs hint Go — DB tidak disentuh, enforcement Go baca DB) | kernel Go lengkap; berkas bukti `docs/bukti-g0/`; commit `1834170`, `c2a0b01` |
-| 2026-11-27 | Koreksi parity auth saat integrasi: `jti` refresh 32→48 byte hex (persis `randomBytes(48).hex`); format jam lockout `15:04`→`15.04` (pemisah titik `id-ID` Node) | pesan 401 lockout & bentuk token kini verbatim NestJS |
-| 2026-11-27 | **Modul core G1–G3 dieksekusi (7 sub-agent)**: audit 5 peta fitur; OpenAPI `api/openapi/system.yaml` 130 op 1:1 `core_routes` live (MISSING/EXTRA: NONE); generate 130+ endpoint (iam 30, rbac 21, tenants 20, security+env 16, wilayah-grup 34, files 9) + integrasi `internal/app`; build/vet/test hijau. Keputusan ratifikasi: password create/reset = argon2id (plaintext hanya di respons sekali); race 23505→409 pesan verbatim; **cutover fisik G5 DITUNDA** (keputusan user — menunggu gateway produksi). Guard: 2 MERAH kontrak `types/deps.go` (echo+database) = pengecualian wiring terdokumentasi | baris core: G1–G3 ✅, G4 🔧, G5 ⏸ |
-| 2026-11-27 | **G4 modul core**: sweep parity 38 kasus NestJS-vs-Go live (admin login lintas-runtime) = 36 PASS + 2 artefak dist NestJS basi (jumlahModul cluster, Content-Disposition export — repo NestJS = sumber pola, Go sesuai repo; tindak lanjut: rebuild dist sebelum P9). Mode K diterapkan: menus kolom live, validasiSortCA, sentinel files, shadowing issues, dial IPv6, pesan pagination | G4 ✅ dengan catatan; G5 ⏸ tetap ditunda |
-| 2026-11-27 | Dev mode FE→Go: `rundev.sh … --goversion` (repo NestJS, commit 36911c9) — target baru `goapi` (:3101, start-bila-mati + build bila perlu), web/`NEXT_PUBLIC_API_URL`+`NEXT_PUBLIC_WS_URL` mengarah ke Go; `start web --goversion` otomatis nyalakan goapi. Web :3000 live → backend Go :3101 (REST + WS hub); NestJS :3001 tetap hidup berdampingan | P9 smoke FE kini bisa dijalankan kapan pun lewat mode ini |
-| 2026-11-27 | **Modul inv G1–G3 dieksekusi (6 audit + 7 generate sub-agent)**: 114 endpoint; keputusan ratifikasi: ck_inv_saldo_on_hand → 409 INV-010 seragam, race 23505 → 409 verbatim, kode kemasan global-DB; kernel pkcipher (AES-256-GCM); integrasi app (Outbox/Numbering/ModCfg/Scope/Cipher); build/vet/test/gofmt hijau; guard 4 MERAH = pengecualian kontrak deps.go (core+inv) terdokumentasi | baris inv: G1–G3 ✅, G4 🔧 |
-| 2026-11-27 | **Inv G4**: P1 scanroute MATCH 58 / GO-ONLY 0; sampel live byte-identical (ringkasan, produk, stok saldo, kategori, agama-404); perbaikan Mode K integrasi: 404 problem+json parity untuk path tanpa controller (pre-router routeAda — Nest 404 di router sebelum guard), opOptIDRef nil, bridge gen→repository (service bebas gen), Angka/Angka0 → repository | G4 ✅ dengan catatan; sweep penuh menyusul (pola parity.py) |
-| 2026-11-27 | **Mode K P0 (laporan user: update inv tidak berfungsi)**: akar = Pre-404 parity (404-edge fix) membandingkan path mentah vs pola `:id` → SEMUA PATCH/DELETE ber-parameter ter-404 palsu di pre-router. Fix: pola `:param` → regex `[^/]+` (routeAda compiled). Verifikasi: PATCH 6 master byte-identical Nest, simpan-berulang 200/200 ×6, versi salah 409 INV-017 identik, DELETE :id kini mencapai handler. Catatan: probe menyisakan nama data uji di dev (kategori/unit/gudang/lokasi/produk/kemasan/JO — rename via FE) | P0 ditutup |
-| 2026-11-27 | **Mode K P0 #2 (laporan user: simpan mutasi gagal)**: (1) simpan mutasi terbukti 201 parity Nest (penyebab "gagal" = unit salah dari FE → FK 23503 → 500 — parity Nest, dijaga); (2) list operasi kosong = bug NULL-array `cardinality(jenis/ids_gudang)` (nil slice → NULL) + scan NULL `id_lokasi_*` header/view (drizzle nullable vs porting NOT NULL) — fix: kirim []{}, CASE-form kolom + mapper any; (3) gerakan list jenis filter kini 200 parity | list operasi parity substantif |
-| 2026-11-27 | **Mode K P0 #3 (laporan user FE: combo lot 500)**: list lot 42804 — ORDER BY CASE mixed-type (kode varchar vs tanggal_kedaluwarsa timestamptz) → dikelompokkan per tipe; sweep sort SELURUH list inv (19 path × whitelist asc/desc): 200 semua + kasus alias 400 = identik Nest (NEST=GO tiap kasus) | sweep sort inv hijau penuh |
-| 2026-11-27 | Swagger backend Go hidup: `/api/docs` (UI, CDN swagger-ui) + `/api/docs-json` (gabungan auth+system+inventory — 167 path, 246 schema, publik parity Nest `api/docs`); fix duplikat schema `Keputusan` di inventory.yaml (enum vs object → KeputusanBody) | alamat dev: http://localhost:3101/api/docs |
-| 2026-11-27 | Catatan G0 (jujur): cutover FISIK route auth via gateway + mati-kan socket.io NestJS = langkah deploy berdampingan (G5 modul core / `release-deploy`), bukan perubahan kode; user bukti khusus `g0_bukti` dibuat di DB dev (password `admin` milik pemilik); FE `apps/web/src/lib/realtime.ts` diganti (1 file, disetujui) — BELUM typecheck/smoke penuh (ikut P9 modul core); perbaikan migrasi berdampak `pg_dump` `\restrict` dibersihkan dari `db/schema.sql` | G5 modul core memakai bukti G4 parity penuh + smoke FE |
+| 2026-11-27 | User ratification (4 decisions): realtime moves as of G0; schema contract = zod as the FE source + new JSON Schema generator + OpenAPI-first per module; auth parity + login cut over at G0 (the `core_sessions` reference = Drizzle live); module order "Peta + ai-naik" (14 modules) | G0 includes the `/api/auth/*` + WS cutover; the §3 matrix order is locked |
+| 2026-11-27 | The Go repo's `AGENTS.md` created (evidence: `/Data/www/nexierp-golang/AGENTS.md`) — calibration of the NestJS L0–L3 discipline | skill prerequisite 1 met |
+| 2026-11-27 | The `docs/ARSITEKTUR-BACKEND-GO.md` constitution created from a 3-sub-agent inventory (14 modules, 1,046 endpoints, 10 jobs, 7 adapters, 47 enqueue sites, realtime 1 event, custom JWT auth) (evidence: `/Data/www/nexierp-golang/docs/ARSITEKTUR-BACKEND-GO.md`) | skill prerequisite 2 met; source of this tracker's §8 |
+| 2026-11-27 | Initial facts: the Go repo completely empty; the `MIGRASI-BACKEND-GO.md` template does not exist in the `migrasi-backend-plan` skill (the structure was derived from `MIGRASI-BACKEND.md`); fact corrections: the old modules are NOT deleted, `@RequirePermission` has 0 usages (route-centric RBAC), outbox consumption = explicit polling | all statuses ⬜; G0 not started |
+| 2026-11-27 | Additional user ratification: the NestJS ↔ Go route/URL/permission pattern MUST be 1:1 with **NestJS as the source of patterns** (live `core_routes` = canonical) so the FE never changes; `cmd/scanroute` = parity-scanner (merge-only, no delete/update of NestJS rows until G7) | constitution §0+§7 amended; P1/P4 parity compares against live rows |
+| 2026-11-27 | **G0 executed (Mode F)**: 5 sub-agents generate + `internal/app` wiring; build/vet/gofmt/test green; --strict guard 0 RED; sqlc 9 packages from `db/schema.sql`; `cmd/scanroute` parity-scanner tested against live (MATCH 1, GO-ONLY 0, LIVE-ONLY 1045, DIFF 8 = the code label `auth.auth.controllers.*` canonical live vs the Go hint — the DB was not touched, Go enforcement reads the DB) | Go kernel complete; evidence files `docs/bukti-g0/`; commits `1834170`, `c2a0b01` |
+| 2026-11-27 | Auth parity fix during integration: `jti` refresh 32→48 hex bytes (exactly `randomBytes(48).hex`); lockout hour format `15:04`→`15.04` (dot separator, Node `id-ID`) | the 401 lockout message & token shape now verbatim NestJS |
+| 2026-11-27 | **core module G1–G3 executed (7 sub-agents)**: audited 5 feature maps; OpenAPI `api/openapi/system.yaml` 130 ops 1:1 vs live `core_routes` (MISSING/EXTRA: NONE); generated 130+ endpoints (iam 30, rbac 21, tenants 20, security+env 16, wilayah group 34, files 9) + `internal/app` integration; build/vet/test green. Ratified decisions: password create/reset = argon2id (plaintext in the response only once); race 23505→409 verbatim message; **physical cutover G5 POSTPONED** (user decision — awaiting the production gateway). Guard: 2 RED on the `types/deps.go` contract (echo+database) = documented wiring exception | core row: G1–G3 ✅, G4 🔧, G5 ⏸ |
+| 2026-11-27 | **core module G4**: parity sweep of 38 live NestJS-vs-Go cases (cross-runtime admin login) = 36 PASS + 2 artifacts of a stale NestJS dist (jumlahModul cluster, Content-Disposition export — the NestJS repo is the source of patterns, Go matches the repo; follow-up: rebuild the dist before P9). Mode K applied: menus live column, validasiSortCA, sentinel files, shadowing issues, IPv6 dial, pagination messages | G4 ✅ with notes; G5 ⏸ still postponed |
+| 2026-11-27 | FE→Go dev mode: `rundev.sh … --goversion` (NestJS repo, commit 36911c9) — new `goapi` target (:3101, start-if-dead + build if needed), web/`NEXT_PUBLIC_API_URL`+`NEXT_PUBLIC_WS_URL` pointed at Go; `start web --goversion` auto-starts goapi. Web :3000 live → Go backend :3101 (REST + WS hub); NestJS :3001 stays alive side by side | the P9 FE smoke can now be run at any time via this mode |
+| 2026-11-27 | **inv module G1–G3 executed (6 audit + 7 generate sub-agents)**: 114 endpoints; ratified decisions: ck_inv_saldo_on_hand → uniform 409 INV-010, race 23505 → 409 verbatim, packaging code global-DB; pkcipher kernel (AES-256-GCM); app integration (Outbox/Numbering/ModCfg/Scope/Cipher); build/vet/test/gofmt green; guard 4 RED = documented deps.go contract exception (core+inv) | inv row: G1–G3 ✅, G4 🔧 |
+| 2026-11-27 | **inv G4**: P1 scanroute MATCH 58 / GO-ONLY 0; live sample byte-identical (summary, product, stock balance, category, agama-404); Mode K integration fixes: 404 problem+json parity for paths without a controller (pre-router routeAda — the Nest 404 happens in the router before the guard), opOptIDRef nil, gen→repository bridge (service free of gen), Angka/Angka0 → repository | G4 ✅ with notes; full sweep to follow (parity.py pattern) |
+| 2026-11-27 | **Mode K P0 (user report: inv update not working)**: root cause = Pre-404 parity (the 404-edge fix) compared the raw path against `:id` patterns → ALL parameterized PATCH/DELETE were falsely 404'd at the pre-router. Fix: `:param` pattern → regex `[^/]+` (routeAda compiled). Verification: PATCH of 6 masters byte-identical to Nest, repeated save 200/200 ×6, wrong version 409 INV-017 identical, DELETE :id now reaches the handler. Note: the probe left test-data names behind in dev (kategori/unit/gudang/lokasi/produk/kemasan/JO — rename via the FE) | P0 closed |
+| 2026-11-27 | **Mode K P0 #2 (user report: mutation save failing)**: (1) mutation save proven 201-parity with Nest (the "failure" cause = wrong unit from the FE → FK 23503 → 500 — Nest parity, preserved); (2) empty operations list = NULL-array bug `cardinality(jenis/ids_gudang)` (nil slice → NULL) + NULL scan of `id_lokasi_*` header/view (drizzle nullable vs ported NOT NULL) — fix: send []{}, CASE-form column + any mapper; (3) movement list jenis filter now 200-parity | operations list substantively at parity |
+| 2026-11-27 | **Mode K P0 #3 (user FE report: lot combo 500)**: lot list 42804 — ORDER BY CASE mixed-type (kode varchar vs tanggal_kedaluwarsa timestamptz) → grouped per type; sort sweep of the ENTIRE inv list set (19 paths × asc/desc whitelist): 200 everywhere + the alias case 400 = identical to Nest (NEST=GO in every case) | inv sort sweep fully green |
+| 2026-11-27 | The Go backend Swagger live: `/api/docs` (UI, swagger-ui CDN) + `/api/docs-json` (merged auth+system+inventory — 167 paths, 246 schemas, public parity with Nest `api/docs`); fixed the duplicate `Keputusan` schema in inventory.yaml (enum vs object → KeputusanBody) | dev address: http://localhost:3101/api/docs |
+| 2026-11-27 | G0 note (honest): the PHYSICAL cutover of the auth routes via the gateway + switching off NestJS socket.io = side-by-side deployment steps (G5 of the core module / `release-deploy`), not code changes; the dedicated evidence user `g0_bukti` was created in the dev DB (password `admin` owned by the owner); the FE `apps/web/src/lib/realtime.ts` was replaced (1 file, approved) — NOT yet typechecked/fully smoke-tested (joins the P9 of the core module); the `pg_dump` `\restrict` migration cleanup removed from `db/schema.sql` | the core module's G5 reuses the full G4 parity evidence + FE smoke |
+| 2026-11-27 | **User decision — core+inv live-sourced DDL foundation (not copies of the NestJS ddl)**: the 91 old `ddl/` files deleted; replaced by 2 files produced by a SPLITTER from `pg_dump --schema-only` of the live `nexierp-postgres` DB (original pg_dump statement blocks, not hand-engineered): `ddl/core.sql` = 48 `core_*` tables + enum/function `set_updated_at`+trigger/index/constraint + **cross-read by core: `hr_karyawan`**; `ddl/inv.sql` = all 22 `inv_*` tables + **cross-read by inv: `pur_penerimaan`, `pur_penerimaan_item`, `pur_pesanan`, `pur_pesanan_item`, `pur_pemasok`** (read by the inv mutations-from-GR query; the pur→inv FKs stay intact). FKs to tables outside the scope intentionally dropped (core_metode_bayar→acc_akun; hr_karyawan→hr_departemen/hr_jabatan). `db/migrations/` 102 old files → `001_core.sql`+`002_inv.sql` (goose up on a fresh Postgres **2/2 success**); `db/schema.sql` = filtered dump of the fresh DB (strip `\restrict`) → sqlc 11 entries regenerated. Mode K nullability corrections to live: `core_users.email`, `core_sessions.id_core_users`/`ip_address`/`user_agent` NOT NULL; `inv_gerakan_stok.id_lokasi_tujuan` nullable (NULL→0); RETURNING role/menu now the direct sqlc model. **core_*/inv_* column parity = 0 delta** (743 columns, names+order+types identical; live has 2 internal-dropped `core_user_permissions` columns that pg_dump indeed does not replicate). build/vet/test green, gofmt clean; api :3101 smoke = health/overview/category/balance all 200 | the Go L0 foundation is now live-sourced per module; regenerate at any time from the live DB after schema changes land via the NestJS repo |
