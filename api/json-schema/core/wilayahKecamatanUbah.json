@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "kode": {
+      "type": "string",
+      "pattern": "^\\d{6}$"
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "idCoreKota": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "additionalProperties": false
+}

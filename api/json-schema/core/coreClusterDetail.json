@@ -1,0 +1,277 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "entityId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "code": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "deskripsi": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "icon": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tone": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "urutan": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AKTIF",
+        "NONAKTIF"
+      ]
+    },
+    "version": {
+      "type": "number"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "$ref": "#/definitions/coreClusterDetailSchema/properties/createdAt"
+    },
+    "jumlahModul": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "modul": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "idCoreModules": {
+            "type": "number"
+          },
+          "key": {
+            "type": "string",
+            "enum": [
+              "inventory",
+              "accounting",
+              "sales",
+              "finance",
+              "hr",
+              "crm",
+              "whatsapp-crm",
+              "book",
+              "pos",
+              "purchasing",
+              "asset",
+              "ess",
+              "fnb",
+              "system",
+              "payment-gateway",
+              "shipment",
+              "ecom",
+              "wf",
+              "ai-llm"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "fiturIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "idCoreModules",
+          "key",
+          "name",
+          "tagline",
+          "enabled",
+          "fiturIds"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "id",
+    "entityId",
+    "code",
+    "nama",
+    "urutan",
+    "status",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "jumlahModul",
+    "modul"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "coreClusterDetailSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "entityId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string"
+        },
+        "nama": {
+          "type": "string"
+        },
+        "deskripsi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "urutan": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "AKTIF",
+            "NONAKTIF"
+          ]
+        },
+        "version": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/coreClusterDetailSchema/properties/createdAt"
+        },
+        "jumlahModul": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modul": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "idCoreModules": {
+                "type": "number"
+              },
+              "key": {
+                "type": "string",
+                "enum": [
+                  "inventory",
+                  "accounting",
+                  "sales",
+                  "finance",
+                  "hr",
+                  "crm",
+                  "whatsapp-crm",
+                  "book",
+                  "pos",
+                  "purchasing",
+                  "asset",
+                  "ess",
+                  "fnb",
+                  "system",
+                  "payment-gateway",
+                  "shipment",
+                  "ecom",
+                  "wf",
+                  "ai-llm"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "tagline": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "fiturIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "idCoreModules",
+              "key",
+              "name",
+              "tagline",
+              "enabled",
+              "fiturIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "entityId",
+        "code",
+        "nama",
+        "urutan",
+        "status",
+        "version",
+        "createdAt",
+        "updatedAt",
+        "jumlahModul",
+        "modul"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

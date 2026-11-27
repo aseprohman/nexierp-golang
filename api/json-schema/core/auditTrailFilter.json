@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "moduleKey": {
+      "type": "string",
+      "enum": [
+        "inventory",
+        "accounting",
+        "sales",
+        "finance",
+        "hr",
+        "crm",
+        "whatsapp-crm",
+        "book",
+        "pos",
+        "purchasing",
+        "asset",
+        "ess",
+        "fnb",
+        "system",
+        "payment-gateway",
+        "shipment",
+        "ecom",
+        "wf",
+        "ai-llm"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "query": {
+      "type": "string"
+    },
+    "dateFrom": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+    },
+    "dateTo": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+    }
+  },
+  "additionalProperties": false
+}

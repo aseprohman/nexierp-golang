@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "username": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "email": {
+      "type": "string"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "code",
+          "role"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "department": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "passwordChangedAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "mustChangePassword": {
+      "type": "boolean"
+    },
+    "failedLoginAttempts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lockedUntil": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "mfaEnabled": {
+      "type": "boolean"
+    },
+    "lastLoginAt": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "createdAt": {
+      "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+    }
+  },
+  "required": [
+    "id",
+    "username",
+    "name",
+    "email",
+    "roles",
+    "department",
+    "isActive",
+    "passwordChangedAt",
+    "mustChangePassword",
+    "failedLoginAttempts",
+    "lockedUntil",
+    "mfaEnabled",
+    "lastLoginAt",
+    "createdAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "userViewSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "username": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "role"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "department": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "passwordChangedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mustChangePassword": {
+          "type": "boolean"
+        },
+        "failedLoginAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lockedUntil": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mfaEnabled": {
+          "type": "boolean"
+        },
+        "lastLoginAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdAt": {
+          "$ref": "#/definitions/userViewSchema/properties/passwordChangedAt/anyOf/0"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "name",
+        "email",
+        "roles",
+        "department",
+        "isActive",
+        "passwordChangedAt",
+        "mustChangePassword",
+        "failedLoginAttempts",
+        "lockedUntil",
+        "mfaEnabled",
+        "lastLoginAt",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

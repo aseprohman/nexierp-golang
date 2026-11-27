@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "idModules": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "exclusiveMinimum": true,
+        "minimum": 0
+      },
+      "maxItems": 200
+    }
+  },
+  "required": [
+    "idModules"
+  ],
+  "additionalProperties": false
+}

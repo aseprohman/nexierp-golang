@@ -1,0 +1,103 @@
+version: "2"
+sql:
+  # Satu entry per package inti. Schema = dump schema live (db/schema.sql)
+  # yang dihasilkan agent migrasi dari goose-up segar + rekonsiliasi.
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/auth"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/auth/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/rbac"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/rbac/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/audit"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/audit/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/outbox"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/outbox/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/numbering"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/numbering/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/moduleconfig"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/moduleconfig/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/mailer"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/mailer/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/storage"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/core/storage/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/files"
+    gen:
+      go:
+        package: "genfiles"
+        out: "internal/core/storage/repository/genfiles"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/core"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/modules/core/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/queries/inv"
+    gen:
+      go:
+        package: "gen"
+        out: "internal/modules/inv/repository/gen"
+        sql_package: "pgx/v5"
+        emit_json_tags: true

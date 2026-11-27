@@ -1,0 +1,9 @@
+=== D: SCHEMA GOOSE (db/schema.sql) vs LIVE (127.0.0.1:15433) ===
+core_* live → schema.sql: SEMUA ADA (47 tabel)
+--- kolom core_sessions (live ⊆ schema.sql?) ---
+live: id id_core_users user_name device_key login_at expires_at logout_at revoked_at ip_address user_agent device is_valid created_at updated_at 
+kolom core_sessions live: SEMUA ADA di schema.sql
+--- kolom core_routes ---
+live: id method uri_pattern permission_code created_at updated_at id_core_modules_features 
+kolom core_routes live: SEMUA ADA di schema.sql
+SUMBER: db/schema.sql = goose segar (91 porting 1:1 ddl) + rekonsiliasi 100-110 (bentuk live = acuan); bukti proses: /tmp/delta-fresh-vs-live.txt (arsip sesi migrasi)

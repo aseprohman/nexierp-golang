@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "urlPath": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parent": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "order": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cssClass": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 30
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "icon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "externalHref": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idCoreModules": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

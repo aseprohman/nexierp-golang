@@ -1,0 +1,15 @@
+{
+  "name": "nexierp-json-schema-gen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generator JSON Schema dari kosakata zod packages/schemas repo NestJS (READ-ONLY) — kebutuhan validasi listener/idempoten Go (AGENTS.md: validasi payload dengan JSON Schema kosakata yang sama dengan NestJS). node_modules di-install LOKAL di folder ini saja.",
+  "scripts": {
+    "gen": "tsx gen.mjs"
+  },
+  "dependencies": {
+    "zod": "^3",
+    "zod-to-json-schema": "^3",
+    "tsx": "^4"
+  }
+}

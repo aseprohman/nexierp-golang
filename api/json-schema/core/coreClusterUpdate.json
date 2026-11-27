@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "deskripsi": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "icon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tone": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "urutan": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AKTIF",
+        "NONAKTIF"
+      ],
+      "default": "AKTIF"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "additionalProperties": false
+}

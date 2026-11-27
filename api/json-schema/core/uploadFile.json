@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48
+    },
+    "fileName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "mimeType": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 120
+    },
+    "dataBase64": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idCoreModules": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idKategori": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "scope",
+    "fileName",
+    "mimeType",
+    "dataBase64"
+  ],
+  "additionalProperties": false
+}

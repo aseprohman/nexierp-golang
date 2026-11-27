@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "delivered",
+        "failed"
+      ]
+    },
+    "availableAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attempts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lastError": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "processedAt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "topic",
+    "payload",
+    "status",
+    "availableAt",
+    "attempts",
+    "lastError",
+    "createdAt",
+    "processedAt"
+  ],
+  "additionalProperties": false
+}

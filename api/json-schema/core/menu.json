@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "urlPath": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "order": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parent": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "icon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "externalHref": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idCoreModules": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "urlPath",
+    "order",
+    "parent",
+    "icon",
+    "externalHref",
+    "idCoreModules"
+  ],
+  "additionalProperties": false
+}

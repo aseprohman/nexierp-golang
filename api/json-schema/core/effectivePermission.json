@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "permissionCode": {
+      "type": "string",
+      "maxLength": 96,
+      "pattern": "^[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+$"
+    },
+    "granted": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "permissionCode",
+    "granted"
+  ],
+  "additionalProperties": false
+}

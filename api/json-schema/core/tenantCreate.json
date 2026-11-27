@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "kode": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "paketTier": {
+      "type": "string",
+      "enum": [
+        "PS1",
+        "PS2",
+        "PS3"
+      ],
+      "default": "PS2"
+    },
+    "maxUsers": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "maxLokasi": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kontakEmail": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "email",
+          "maxLength": 150
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kontakTelepon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "kode",
+    "nama"
+  ],
+  "additionalProperties": false
+}

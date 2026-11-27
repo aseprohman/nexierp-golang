@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tagline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "isCore": {
+      "type": "boolean"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "enabledAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "disabledAt": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/moduleRegistryViewSchema/properties/enabledAt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "disabledBy": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "key",
+    "name",
+    "tagline",
+    "tone",
+    "isCore",
+    "enabled",
+    "enabledAt",
+    "disabledAt",
+    "disabledBy"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "moduleRegistryViewSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tagline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "isCore": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "enabledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "disabledAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/moduleRegistryViewSchema/properties/enabledAt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disabledBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "name",
+        "tagline",
+        "tone",
+        "isCore",
+        "enabled",
+        "enabledAt",
+        "disabledAt",
+        "disabledBy"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

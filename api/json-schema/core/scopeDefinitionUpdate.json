@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "scope_key": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "module_id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "target_table": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "target_field": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "is_active": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

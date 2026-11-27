@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "fileId": {
+      "type": "number"
+    },
+    "fileName": {
+      "type": "string"
+    },
+    "mimeType": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "image",
+        "pdf",
+        "video",
+        "audio",
+        "file"
+      ]
+    },
+    "sizeBytes": {
+      "type": "number"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "checksumSha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uploadedBy": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "idCoreModules": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "idKategori": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "fileId",
+    "fileName",
+    "mimeType",
+    "kind",
+    "sizeBytes",
+    "scope",
+    "checksumSha256",
+    "uploadedBy",
+    "idCoreModules",
+    "idKategori",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false
+}

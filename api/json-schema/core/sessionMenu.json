@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "urlPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "order": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "icon": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "externalHref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "urlPath",
+    "order",
+    "icon",
+    "externalHref"
+  ],
+  "additionalProperties": false
+}

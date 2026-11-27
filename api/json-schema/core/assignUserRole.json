@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "roleCode": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "userId",
+    "roleCode"
+  ],
+  "additionalProperties": false
+}

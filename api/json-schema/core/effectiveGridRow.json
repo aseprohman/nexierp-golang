@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "moduleKey": {
+      "type": "string",
+      "enum": [
+        "inventory",
+        "accounting",
+        "sales",
+        "finance",
+        "hr",
+        "crm",
+        "whatsapp-crm",
+        "book",
+        "pos",
+        "purchasing",
+        "asset",
+        "ess",
+        "fnb",
+        "system",
+        "payment-gateway",
+        "shipment",
+        "ecom",
+        "wf",
+        "ai-llm",
+        "wa",
+        "regpas",
+        "farmasi",
+        "lab",
+        "kasir",
+        "rme",
+        "penjamin",
+        "jasmed",
+        "kepatuhan",
+        "dokter-portal"
+      ]
+    },
+    "permissionCode": {
+      "type": "string",
+      "minLength": 1
+    },
+    "granted": {
+      "type": "boolean"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "role_global",
+        "deny"
+      ]
+    }
+  },
+  "required": [
+    "moduleKey",
+    "permissionCode",
+    "granted",
+    "source"
+  ],
+  "additionalProperties": false
+}

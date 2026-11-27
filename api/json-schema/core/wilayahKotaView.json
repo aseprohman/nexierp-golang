@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "kode": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "jenis": {
+      "type": "string",
+      "enum": [
+        "KOTA",
+        "KABUPATEN"
+      ]
+    },
+    "idCoreProvinsi": {
+      "type": "integer"
+    },
+    "provinsiNama": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "kode",
+    "nama",
+    "jenis",
+    "idCoreProvinsi",
+    "provinsiNama",
+    "version"
+  ],
+  "additionalProperties": false
+}

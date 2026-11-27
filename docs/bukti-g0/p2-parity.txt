@@ -1,0 +1,66 @@
+PASS GET /api/system/health
+PASS GET /api/system/overview
+PASS GET /api/system/overview/audit
+PASS GET /api/system/users?page=1&limit=2
+PASS GET /api/system/users/1
+PASS GET /api/system/roles
+PASS GET /api/system/roles/1/permissions
+PASS GET /api/system/modules
+PASS GET /api/system/routes?page=1&limit=2
+PASS GET /api/system/routes/map
+PASS GET /api/system/permissions?page=1&limit=2
+PASS GET /api/system/menus
+PASS GET /api/system/menus?tree=1
+PASS GET /api/system/features
+PASS GET /api/system/user-overrides?userId=1
+PASS GET /api/system/security/sessions?page=1&limit=2
+PASS GET /api/system/security/login-audit?page=1&limit=2
+PASS GET /api/system/security/mfa?limit=2
+PASS GET /api/system/security/password-history?limit=2
+PASS GET /api/system/security/ip-allowlist
+PASS GET /api/system/audit-trail?page=1&limit=2
+PASS GET /api/system/audit-trail/actions
+FAIL GET /api/system/audit-trail/export
+  NEST: id,at,actor_user_id,actor_name,module_key,entity_type,entity_id,action,severity,before_value,after_value,ip_address,user_agent,request_id
+350857,2026-11-27T01:37:29.722Z,,sistem,shipment,shp_order,1,
+  GO  : id,at,actor_user_id,actor_name,module_key,entity_type,entity_id,action,severity,before_value,after_value,ip_address,user_agent,request_id
+PASS GET /api/system/environment
+PASS GET /api/system/tenants
+PASS GET /api/system/tenants/context
+PASS GET /api/system/files?page=1&limit=2
+PASS GET /api/system/files/kategori
+PASS GET /api/system/wilayah/provinsi?page=1&limit=2
+PASS GET /api/system/wilayah/kota?filter%5BidProvinsi%5D=1&limit=2
+PASS GET /api/system/wilayah/kodepos/10110?page=1&limit=2
+FAIL GET /api/system/cluster?page=1&limit=2
+  NEST: [200, {"data": [{"code": "SIT", "createdAt": "2026-11-16T22:03:42.254Z", "deskripsi": "Cluster satuan pendidikan Islam terpadu: akademik, tagihan siswa, kepesantrenan, accounting, PPDB", "entityId": "049fb404-b574-400a-89fa-7647d9755740", "icon": "GraduationCap", "id": 1, "jumlahModul": 2, "nama": "
+  GO  : [200, {"data": [{"code": "SIT", "createdAt": "2026-11-16T22:03:42.254Z", "deskripsi": "Cluster satuan pendidikan Islam terpadu: akademik, tagihan siswa, kepesantrenan, accounting, PPDB", "entityId": "049fb404-b574-400a-89fa-7647d9755740", "icon": "GraduationCap", "id": 1, "jumlahModul": 1, "nama": "
+PASS GET /api/system/cluster/modul-options
+PASS GET /api/system/agama
+PASS GET /api/system/agama/999999
+PASS GET /api/system/datascope/definitions
+PASS POST /api/system/agama
+PASS POST /api/system/agama
+--- lifecycle agama ---
+NEST: create=201 id=16 patch-salah-versi=409 Resource sudah diubah pihak lain — version kirim (1000) ≠ version terkini (1) —  delete=200
+GO: create=201 id=17 patch-salah-versi=409 Resource sudah diubah pihak lain — version kirim (1000) ≠ version terkini (1) —  delete=200
+RINGKAS: PASS=36 FAIL=2 dari 38 kasus
+GAGAL: /api/system/audit-trail/export, /api/system/cluster?page=1&limit=2
+
+=== VERDICT G4 P2-P7 (2026-11-27) ===
+- 36/38 PASS sebelum normalisasi; 2 sisa = artefak dist NestJS BASI (node dist/main
+  dibangun sebelum repo kini):
+  1) audit-trail/export: status 200, content-type, header 14 kolom, LIMIT 50000,
+     jumlah baris (50001=50001) IDENTIK. Selisih: Go mengirim Content-Disposition
+     (repo NestJS juga memasangnya — dist basi tidak); isi baris beda hanya
+     karena masing-masing panggilan menulis baris audit-ekspornya sendiri.
+  2) cluster list jumlahModul: repo NestJS kini = count hidup (sama dengan Go);
+     dist basi menghitung beda (2 vs 1 padahal tabel live = 1 baris hidup).
+  → Tindak lanjut: rebuild `dist` NestJS sebelum P9 smoke/cutover, sweep ulang
+    diharapkan 38/38. Go mengikuti REPO (sumber pola) — bukan dist basi.
+- Lifecycle agama dua runtime: create 201 + PATCH versi salah 409 (WLY-002/SYS-409
+  verbatim) + delete 200 — identik.
+- Perbaikan Mode K yang diterapkan: menus (kolom live eksplisit + 4 mapper varian
+  Row), validasiSortCA (skip saat tanpa sort), ListFiles sentinel idKategori=0,
+  shadowing issues validator wilayah (9 titik), dial SMTP net.JoinHostPort,
+  pesan pagination errkontrak verbatim.

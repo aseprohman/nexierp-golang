@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "userId": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "userName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deviceKey": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "loginAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+    },
+    "logoutAt": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revokedAt": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ipAddress": {
+      "type": "string",
+      "minLength": 1
+    },
+    "userAgent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "device": {
+      "type": "string",
+      "minLength": 1
+    },
+    "isValid": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "userId",
+    "userName",
+    "deviceKey",
+    "loginAt",
+    "expiresAt",
+    "logoutAt",
+    "revokedAt",
+    "ipAddress",
+    "userAgent",
+    "device",
+    "isValid"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "sessionRowSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "userId": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "userName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deviceKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "loginAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+        },
+        "logoutAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revokedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/sessionRowSchema/properties/loginAt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ipAddress": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userAgent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1
+        },
+        "isValid": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "userName",
+        "deviceKey",
+        "loginAt",
+        "expiresAt",
+        "logoutAt",
+        "revokedAt",
+        "ipAddress",
+        "userAgent",
+        "device",
+        "isValid"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

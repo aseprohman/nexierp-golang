@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "kategori": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "entri": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kunci": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "nilai": {}
+        },
+        "required": [
+          "kunci"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "kategori",
+    "entri"
+  ],
+  "additionalProperties": false
+}

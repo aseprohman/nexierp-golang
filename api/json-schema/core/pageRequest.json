@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "default": 20
+    },
+    "sort": {
+      "type": "string",
+      "pattern": "^-?\\w+$"
+    },
+    "filter": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,183 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "userName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "username": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mfa": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+            },
+            "userName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "type": "string",
+              "enum": [
+                "totp"
+              ]
+            },
+            "confirmedAt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "lastUsedAt": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/userMfaStatusSchema/properties/mfa/anyOf/0/properties/confirmedAt/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "recoveryCodesLeft": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "userId",
+            "userName",
+            "method",
+            "confirmedAt",
+            "enabled",
+            "lastUsedAt",
+            "recoveryCodesLeft"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "userId",
+    "userName",
+    "username",
+    "mfa"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "userMfaStatusSchema": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "userName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "username": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mfa": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "integer",
+                  "exclusiveMinimum": true,
+                  "minimum": 0
+                },
+                "userName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "totp"
+                  ]
+                },
+                "confirmedAt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "lastUsedAt": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/userMfaStatusSchema/properties/mfa/anyOf/0/properties/confirmedAt/anyOf/0"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "recoveryCodesLeft": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "userId",
+                "userName",
+                "method",
+                "confirmedAt",
+                "enabled",
+                "lastUsedAt",
+                "recoveryCodesLeft"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "userId",
+        "userName",
+        "username",
+        "mfa"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

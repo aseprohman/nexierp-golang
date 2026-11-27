@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "maxFailedAttempts": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "lockoutMinutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1440
+    },
+    "sessionTtlHours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 720
+    }
+  },
+  "required": [
+    "maxFailedAttempts",
+    "lockoutMinutes",
+    "sessionTtlHours"
+  ],
+  "additionalProperties": false
+}

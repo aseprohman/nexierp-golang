@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "search": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AKTIF",
+        "NONAKTIF"
+      ]
+    },
+    "sort": {
+      "type": "string",
+      "pattern": "^-?\\w+$"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "default": 50
+    }
+  },
+  "additionalProperties": false
+}

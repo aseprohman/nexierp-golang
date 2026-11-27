@@ -1,0 +1,8 @@
+enqueue#1 id=445 | enqueue ulang key sama id=445 | idempoten=true
+=== NESTJS-SIDE CONSUME (SQL NestJS persis: poll SKIP LOCKED + tandaiDelivered) ===
+445|g0.bukti.cutover|g0-bukti-1|pending
+BEGIN
+445
+UPDATE 1
+COMMIT
+445|g0.bukti.cutover|delivered

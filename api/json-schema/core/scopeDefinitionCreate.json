@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "module_id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "scope_key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "maxLength": 50
+    },
+    "label": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "target_table": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "target_field": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    }
+  },
+  "required": [
+    "scope_key",
+    "label",
+    "target_table",
+    "target_field"
+  ],
+  "additionalProperties": false
+}

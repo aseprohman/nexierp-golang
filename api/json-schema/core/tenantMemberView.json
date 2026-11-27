@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "idCoreUsers": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "username": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1
+    },
+    "isDefault": {
+      "type": "boolean"
+    },
+    "dicabutPada": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "idCoreUsers",
+    "username",
+    "nama",
+    "isDefault",
+    "dicabutPada"
+  ],
+  "additionalProperties": false
+}

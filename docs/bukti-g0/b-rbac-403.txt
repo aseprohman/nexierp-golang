@@ -1,0 +1,17 @@
+=== B1: NESTJS 403 utk route system dgn user tanpa role ===
+{"type":"urn:nexierp:problem:FORB-403","title":"Forbidden","status":403,"detail":"permission 'system.rbac.stats' diperlukan","instance":"/api/system/overview","code":"FORB-403"}
+
+=== B2: GO compiler.Has terhadap core_routes live ===
+# nexierp/scripts/bukti403
+scripts/bukti403/main.go:66:17: undefined: slog
+scripts/bukti403/main.go:66:67: undefined: io
+panic: environment DATABASE_URL tidak diset
+
+goroutine 1 [running]:
+main.main()
+	/Data/www/nexierp-golang/scripts/bukti403/main.go:25 +0x9e5
+exit status 2
+compiler.Has(g0_bukti, system.rbac.stats) = false (harapan: false)
+guard Go: status=403 body={"type":"urn:nexierp:problem:FORB-403","title":"Forbidden","status":403,"detail":"permission 'system.rbac.stats' diperlukan","instance":"/system/overview","code":"FORB-403"}
+
+harapan NestJS: status=403 body={...code FORB-403, detail "permission 'system.rbac.stats' diperlukan"}

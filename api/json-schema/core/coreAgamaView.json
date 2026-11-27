@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "entityId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "code": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "urutan": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AKTIF",
+        "NONAKTIF"
+      ]
+    },
+    "version": {
+      "type": "number"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "$ref": "#/definitions/coreAgamaViewSchema/properties/createdAt"
+    }
+  },
+  "required": [
+    "id",
+    "entityId",
+    "code",
+    "nama",
+    "urutan",
+    "status",
+    "version",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "coreAgamaViewSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "entityId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string"
+        },
+        "nama": {
+          "type": "string"
+        },
+        "urutan": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "AKTIF",
+            "NONAKTIF"
+          ]
+        },
+        "version": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/coreAgamaViewSchema/properties/createdAt"
+        }
+      },
+      "required": [
+        "id",
+        "entityId",
+        "code",
+        "nama",
+        "urutan",
+        "status",
+        "version",
+        "createdAt",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

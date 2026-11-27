@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actorUserId": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "actorName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "moduleKey": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "inventory",
+            "accounting",
+            "sales",
+            "finance",
+            "hr",
+            "crm",
+            "whatsapp-crm",
+            "book",
+            "pos",
+            "purchasing",
+            "asset",
+            "ess",
+            "fnb",
+            "system",
+            "payment-gateway",
+            "shipment",
+            "ecom",
+            "wf",
+            "ai-llm"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entityType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entityId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beforeValue": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "afterValue": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/auditTrailEntrySchema/properties/beforeValue/anyOf/0"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ]
+    },
+    "ipAddress": {
+      "type": "string",
+      "minLength": 1
+    },
+    "userAgent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "id",
+    "at",
+    "actorUserId",
+    "actorName",
+    "moduleKey",
+    "entityType",
+    "entityId",
+    "action",
+    "beforeValue",
+    "afterValue",
+    "severity",
+    "ipAddress",
+    "userAgent",
+    "requestId"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "auditTrailEntrySchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "actorUserId": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actorName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "moduleKey": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "inventory",
+                "accounting",
+                "sales",
+                "finance",
+                "hr",
+                "crm",
+                "whatsapp-crm",
+                "book",
+                "pos",
+                "purchasing",
+                "asset",
+                "ess",
+                "fnb",
+                "system",
+                "payment-gateway",
+                "shipment",
+                "ecom",
+                "wf",
+                "ai-llm"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entityType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "beforeValue": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "afterValue": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/auditTrailEntrySchema/properties/beforeValue/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "info",
+            "warning",
+            "critical"
+          ]
+        },
+        "ipAddress": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userAgent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requestId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "at",
+        "actorUserId",
+        "actorName",
+        "moduleKey",
+        "entityType",
+        "entityId",
+        "action",
+        "beforeValue",
+        "afterValue",
+        "severity",
+        "ipAddress",
+        "userAgent",
+        "requestId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

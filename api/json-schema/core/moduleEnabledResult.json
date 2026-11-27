@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "changed": {
+      "type": "boolean"
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "changed",
+    "key",
+    "enabled"
+  ],
+  "additionalProperties": false
+}

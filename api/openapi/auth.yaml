@@ -1,0 +1,481 @@
+# =============================================================================
+# api/openapi/auth.yaml — kontrak 8 route auth (CORE) — sumber kebenaran L0.
+# FAKTA repo NestJS (READ-ONLY): apps/api/src/core/auth/controllers/auth.controller.ts
+# + types/auth-types.ts + services/auth.service.ts + packages/schemas/src/core/auth.ts.
+# Padanan Go: internal/core/auth (handler.go — route VERBATIM).
+#
+# CATATAN PATH: paths di sini TANPA prefix global /api — GATEWAY menyisipkan
+# /api di depan (padanan setGlobalPrefix("api") NestJS; guard RBAC mencocokkan
+# uri_pattern setelah prefix dibuang). Contoh: /auth/login diakses via
+# <gateway>/api/auth/login.
+#
+# Envelope sukses PERSIS NestJS: {"data": <payload>} (meta absent untuk auth).
+# Error PERSIS ProblemExceptionFilter NestJS: problem+json RFC 7807.
+# ==============================================================================
+openapi: 3.1.0
+
+info:
+  title: NEXIERP API — Auth (CORE)
+  version: 1.0.0
+  description: |
+    Kontrak auth core: login, registrasi member (menunggu aktivasi), aktivasi
+    via token email, kirim-ulang tautan, refresh (rotasi pasangan token),
+    logout, me (konteks sesi), change-password.
+
+    ## Prefix gateway
+    Semua path TANPA prefix `/api` — **gateway menyisipkan `/api`** di depan
+    path di dokumen ini (setGlobalPrefix NestJS). `/auth/login` di sini =
+    `/api/auth/login` di jaringan.
+
+    ## Autentikasi
+    JWT access token pada header `Authorization: Bearer <token>` ATAU cookie
+    httpOnly ruang origin: backoffice `nexierp_at`/`nexierp_rt`, portal member
+    `ecom_at`/`ecom_rt` (cookie di-set pada login/refresh, dibersihkan pada
+    logout). Route bertanda guard wajib sesi aktif; route publik tidak.
+
+    ## Envelope
+    Sukses = `{"data": ...}` (tanpa `meta` untuk auth). Error = dokumen
+    RFC 7807 `application/problem+json` (lihat schema `Problem`).
+servers:
+  - url: /
+    description: Gateway menyisipkan prefix /api di depan setiap path di bawah.
+  - url: http://localhost:3101/api
+    description: Dev langsung ke API Go (prefix /api disertakan di URL server).
+
+tags:
+  - name: auth
+    description: Autentikasi & konteks sesi (publik 5 + guard 3).
+
+paths:
+  /auth/login:
+    post:
+      operationId: authLogin
+      tags: [auth]
+      summary: Login — publik.
+      description: |
+        Body invalid = 400 (zod), kredensial salah / user nonaktif = 401.
+        Sukses = pasangan token + Set-Cookie httpOnly sesuai ruang stack:
+        portal member `ecom_at`/`ecom_rt`, backoffice `nexierp_at`/`nexierp_rt`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginBody' }
+      responses:
+        '200':
+          description: Login sukses — pasangan token (cookie httpOnly terpasang).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeTokenPairResult' }
+        '400': { $ref: '#/components/responses/Problem400' }
+        '401':
+          description: Username/password salah atau user nonaktif.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/register:
+    post:
+      operationId: authRegister
+      tags: [auth]
+      summary: Registrasi member portal — publik.
+      description: |
+        Akun dibuat NONAKTIF (status MENUNGGU_AKTIVASI) + tautan aktivasi
+        dikirim ke email; TANPA cookie sesi — login ditolak sampai
+        `/auth/aktivasi` sukses. Email sudah terdaftar = 409.
+        Kegagalan SMTP TETAP 201 (pemulihan via kirim-ulang).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterBody' }
+      responses:
+        '201':
+          description: Registrasi sukses — akun menunggu aktivasi.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeRegisterResult' }
+        '400':
+          description: Payload tidak valid (schema register).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '409':
+          description: Email sudah terdaftar (uq core_users.username).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/aktivasi:
+    post:
+      operationId: authAktivasi
+      tags: [auth]
+      summary: Aktivasi akun via token email — publik.
+      description: |
+        One-time + TTL 24 jam; idempoten untuk klik ganda. Sukses → akun AKTIF
+        (login dibuka). Token tidak valid / sudah terpakai / kedaluwarsa = 400.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AktivasiBody' }
+      responses:
+        '200':
+          description: Akun diaktivasi — silakan masuk dengan kredensial registrasi.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeOk' }
+        '400':
+          description: Token tidak valid / sudah terpakai / kedaluwarsa (minta tautan baru).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/aktivasi/kirim-ulang:
+    post:
+      operationId: authKirimUlangAktivasi
+      tags: [auth]
+      summary: Kirim ulang tautan aktivasi — publik.
+      description: |
+        SELALU ok (anti-enumerasi email — tidak membocorkan keberadaan akun).
+        Bila akun menunggu aktivasi, tautan baru dikirim (token lama dicabut).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/KirimUlangAktivasiBody' }
+      responses:
+        '200':
+          description: Permintaan diterima.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeOk' }
+        '400':
+          description: Body tidak valid (schema email).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/refresh:
+    post:
+      operationId: authRefresh
+      tags: [auth]
+      summary: Refresh pasangan token — publik.
+      description: |
+        Refresh token dari body ATAU cookie ruang request (`nexierp_rt`
+        backoffice / `ecom_rt` portal). Rotasi: pasangan token baru di-set
+        ulang sebagai cookie httpOnly. Tanpa token (body kosong + tanpa
+        cookie) = 400; token invalid/kedaluwarsa atau sesi dicabut = 401.
+      requestBody:
+        required: false
+        description: Opsional — tanpa body, refresh token diambil dari cookie.
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshBody' }
+      responses:
+        '200':
+          description: Rotasi sukses — pasangan token baru + cookie ter-update.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeTokenPairResult' }
+        '400':
+          description: Refresh token tidak ada (body atau cookie ruang request).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '401':
+          description: Refresh token invalid/kedaluwarsa atau sesi sudah dicabut.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/logout:
+    post:
+      operationId: authLogout
+      tags: [auth]
+      summary: Logout sesi milik JWT — guard.
+      description: |
+        Sesi dicabut + cookie SELALU dibersihkan; aktor dari token (bukan
+        payload client). Idempoten untuk sesi yang sudah dicabut.
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Sesi dicabut + cookie dibersihkan.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeOk' }
+        '401':
+          $ref: '#/components/responses/Problem401'
+
+  /auth/me:
+    get:
+      operationId: authMe
+      tags: [auth]
+      summary: Konteks sesi aktif — guard.
+      description: Profil + roles + permission efektif + menu (datar, urut `order`) + id karyawan ter-link (null bila akun portal belum ter-link).
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: "Konteks sesi: user, roles, permission efektif, menu."
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeMeView' }
+        '401':
+          $ref: '#/components/responses/Problem401'
+
+  /auth/change-password:
+    post:
+      operationId: authChangePassword
+      tags: [auth]
+      summary: Ganti password mandiri — guard.
+      description: |
+        Verifikasi password saat ini, argon2 password baru, catat
+        password_history, reset must_change_password. newPassword minimal 6
+        karakter — gagal pre-parse = 400 VAL-400 (pesan verbatim: "Body tidak
+        valid (newPassword minimal 6 karakter).").
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordBody' }
+      responses:
+        '200':
+          description: Password diganti.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvelopeOk' }
+        '400':
+          description: Body tidak valid (newPassword minimal 6 karakter / password saat ini kosong).
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '401':
+          $ref: '#/components/responses/Problem401'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Access token JWT. Alternatif: cookie httpOnly ruang origin
+        (`nexierp_at` backoffice / `ecom_at` portal) yang di-set otomatis
+        pada login/refresh.
+
+  responses:
+    Problem400:
+      description: Permintaan tidak valid (zod/VAL-400).
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Problem401:
+      description: Autentikasi diperlukan (AUTH-401) — token hilang/invalid/sesi dicabut.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    # ---------------------------------------------------------------
+    # Error — problem+json RFC 7807 (persis ProblemExceptionFilter).
+    # ---------------------------------------------------------------
+    FieldIssue:
+      type: object
+      required: [field, message]
+      properties:
+        field: { type: string, description: Path field zod ("path.join('.')"). }
+        message: { type: string }
+    Problem:
+      type: object
+      required: [type, title, status, detail, instance, code]
+      properties:
+        type:
+          type: string
+          description: URN tipe problem — "urn:nexierp:problem:<code>".
+          examples: ["urn:nexierp:problem:VAL-400"]
+        title:
+          type: string
+          description: Status text HTTP ("Bad Request", "Unauthorized", …).
+        status: { type: integer, description: Kode status HTTP. }
+        detail: { type: string, description: Pesan manusiawi (boleh generik untuk 500). }
+        instance:
+          type: string
+          description: Request URI apa adanya (request.url NestJS).
+        code:
+          type: string
+          description: Kode error domain — VAL-400, AUTH-401, FORB-403, NOTF-404, CONF-409, VAL-422, RATE-429, SYS-000/SYS-001.
+        errors:
+          type: array
+          description: Hanya ada pada error validasi (issues zod).
+          items: { $ref: '#/components/schemas/FieldIssue' }
+
+    # ---------------------------------------------------------------
+    # Envelope sukses — {"data": ...} (schema object required [data]).
+    # ---------------------------------------------------------------
+    EnvelopeTokenPairResult:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/TokenPairResult' }
+    EnvelopeRegisterResult:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/RegisterResult' }
+    EnvelopeMeView:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/MeView' }
+    EnvelopeOk:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [ok]
+          properties:
+            ok: { const: true }
+          additionalProperties: false
+
+    # ---------------------------------------------------------------
+    # Request body.
+    # ---------------------------------------------------------------
+    LoginBody:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string, minLength: 1 }
+        password: { type: string, minLength: 1 }
+      additionalProperties: false
+    RegisterBody:
+      type: object
+      required: [email, nama, sandi]
+      properties:
+        email: { type: string, format: email, maxLength: 150, description: Di-trim; sekaligus username akun (lowercase, natural key core_users.username). }
+        nama: { type: string, minLength: 1, maxLength: 100 }
+        telepon: { type: string, maxLength: 50, description: Opsional — diisi lewat profil ECOM (`PATCH /ecom/me/profil`). }
+        sandi: { type: string, minLength: 8, maxLength: 72 }
+      additionalProperties: false
+    AktivasiBody:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string, minLength: 10, maxLength: 200, description: Token mentah dari tautan aktivasi email. }
+      additionalProperties: false
+    KirimUlangAktivasiBody:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email, maxLength: 150 }
+      additionalProperties: false
+    RefreshBody:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken: { type: string, minLength: 1 }
+      additionalProperties: false
+    ChangePasswordBody:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword: { type: string, minLength: 1 }
+        newPassword: { type: string, minLength: 6 }
+      additionalProperties: false
+
+    # ---------------------------------------------------------------
+    # Respons data.
+    # ---------------------------------------------------------------
+    SessionUserRole:
+      type: object
+      required: [code, role, description]
+      properties:
+        code: { type: string, minLength: 1 }
+        role: { type: string, minLength: 1 }
+        description:
+          type: [string, 'null']
+          description: Deskripsi role — null bila kosong.
+    SessionView:
+      type: object
+      required: [sessionId, user, permissionSet, loginAt, expiresAt]
+      properties:
+        sessionId: { type: integer, minimum: 1 }
+        user:
+          type: object
+          required: [id, username, fullName, roles]
+          properties:
+            id: { type: integer, minimum: 1 }
+            username: { type: string, minLength: 1 }
+            fullName: { type: string, minLength: 1 }
+            roles:
+              type: array
+              items: { $ref: '#/components/schemas/SessionUserRole' }
+        permissionSet:
+          type: array
+          description: Permission string efektif hasil compiler RBAC (sorted leksikografis).
+          items: { type: string }
+        loginAt: { type: string, format: date-time, description: ISO 8601 dengan offset. }
+        expiresAt: { type: string, format: date-time, description: ISO 8601 dengan offset. }
+    TokenPairResult:
+      type: object
+      required: [accessToken, refreshToken, tokenType, expiresIn, session]
+      properties:
+        accessToken: { type: string, minLength: 10 }
+        refreshToken: { type: string, minLength: 10 }
+        tokenType: { const: Bearer }
+        expiresIn:
+          type: integer
+          minimum: 1
+          description: Detik sampai access token kedaluwarsa.
+        session: { $ref: '#/components/schemas/SessionView' }
+    RegisterResult:
+      type: object
+      required: [email, status]
+      properties:
+        email: { type: string, minLength: 1 }
+        status: { const: MENUNGGU_AKTIVASI }
+    MenuItem:
+      type: object
+      description: Item menu /auth/me — DATAR, urut `order` (id tie-break); `parent` untuk susun tree di klien.
+      required: [id, text, urlPath, order, parent, icon, externalHref]
+      properties:
+        id: { type: integer, minimum: 1 }
+        text: { type: string, minLength: 1 }
+        urlPath:
+          type: [string, 'null']
+          description: Path tujuan — null untuk grup/heading atau link eksternal.
+        order:
+          type: [integer, 'null']
+        parent:
+          type: [integer, 'null']
+          description: id menu induk (null = level atas).
+        icon:
+          type: [string, 'null']
+          description: Nama ikon lucide (string core_menus.icon) — dirender sidebar.
+        externalHref:
+          type: [string, 'null']
+          description: Link eksternal (url_path NULL) — belum dikonsumsi sidebar.
+    MeView:
+      type: object
+      required: [id, username, fullName, department, email, roles, permissions, menus]
+      properties:
+        id: { type: integer, minimum: 1 }
+        username: { type: string, minLength: 1 }
+        fullName: { type: string, minLength: 1 }
+        department: { type: string, description: Nama departemen — "" bila user tidak punya departemen. }
+        email: { type: string }
+        roles:
+          type: array
+          items: { $ref: '#/components/schemas/SessionUserRole' }
+        permissions:
+          type: array
+          description: Permission code efektif ("{modul}.{fitur}.{method}").
+          items: { type: string }
+        menus:
+          type: array
+          description: Menu gabungan semua role user — datar, urut `order`.
+          items: { $ref: '#/components/schemas/MenuItem' }
+        idHrKaryawan:
+          type: [integer, 'null']
+          description: id hr_karyawan ter-link (hr_karyawan.id_core_users) — null bila akun belum ter-link (HR-BR06).

@@ -1,0 +1,747 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "username": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "role"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "department": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "passwordChangedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mustChangePassword": {
+          "type": "boolean"
+        },
+        "failedLoginAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lockedUntil": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mfaEnabled": {
+          "type": "boolean"
+        },
+        "lastLoginAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdAt": {
+          "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "name",
+        "email",
+        "roles",
+        "department",
+        "isActive",
+        "passwordChangedAt",
+        "mustChangePassword",
+        "failedLoginAttempts",
+        "lockedUntil",
+        "mfaEnabled",
+        "lastLoginAt",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    },
+    "extraRoles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "exclusiveMinimum": true,
+            "minimum": 0
+          },
+          "roleCode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assignedBy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assignedAt": {
+            "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+          }
+        },
+        "required": [
+          "userId",
+          "roleCode",
+          "assignedBy",
+          "assignedAt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "effectivePermissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rolePermissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "permissionId": {
+            "type": "integer"
+          },
+          "permissionName": {
+            "type": "string"
+          },
+          "moduleKey": {
+            "type": "string"
+          },
+          "granted": {
+            "type": "boolean"
+          },
+          "grantedByName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "grantedAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "userName",
+          "permissionId",
+          "permissionName",
+          "moduleKey",
+          "granted",
+          "grantedByName",
+          "grantedAt",
+          "expiresAt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": true,
+            "minimum": 0
+          },
+          "userId": {
+            "type": "integer",
+            "exclusiveMinimum": true,
+            "minimum": 0
+          },
+          "userName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deviceKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "loginAt": {
+            "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+          },
+          "expiresAt": {
+            "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+          },
+          "logoutAt": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revokedAt": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ipAddress": {
+            "type": "string",
+            "minLength": 1
+          },
+          "userAgent": {
+            "type": "string",
+            "minLength": 1
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isValid": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "userName",
+          "deviceKey",
+          "loginAt",
+          "expiresAt",
+          "logoutAt",
+          "revokedAt",
+          "ipAddress",
+          "userAgent",
+          "device",
+          "isValid"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "mfa": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+            },
+            "userName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "type": "string",
+              "enum": [
+                "totp"
+              ]
+            },
+            "confirmedAt": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "lastUsedAt": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "recoveryCodesLeft": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "userId",
+            "userName",
+            "method",
+            "confirmedAt",
+            "enabled",
+            "lastUsedAt",
+            "recoveryCodesLeft"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "user",
+    "extraRoles",
+    "effectivePermissions",
+    "rolePermissions",
+    "overrides",
+    "sessions",
+    "mfa"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "userDetailSchema": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+            },
+            "username": {
+              "type": "string",
+              "minLength": 1
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "email": {
+              "type": "string"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "role": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "code",
+                  "role"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "department": {
+              "type": "string"
+            },
+            "isActive": {
+              "type": "boolean"
+            },
+            "passwordChangedAt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "mustChangePassword": {
+              "type": "boolean"
+            },
+            "failedLoginAttempts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lockedUntil": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "mfaEnabled": {
+              "type": "boolean"
+            },
+            "lastLoginAt": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "createdAt": {
+              "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+            }
+          },
+          "required": [
+            "id",
+            "username",
+            "name",
+            "email",
+            "roles",
+            "department",
+            "isActive",
+            "passwordChangedAt",
+            "mustChangePassword",
+            "failedLoginAttempts",
+            "lockedUntil",
+            "mfaEnabled",
+            "lastLoginAt",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        },
+        "extraRoles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "integer",
+                "exclusiveMinimum": true,
+                "minimum": 0
+              },
+              "roleCode": {
+                "type": "string",
+                "minLength": 1
+              },
+              "assignedBy": {
+                "type": "string",
+                "minLength": 1
+              },
+              "assignedAt": {
+                "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+              }
+            },
+            "required": [
+              "userId",
+              "roleCode",
+              "assignedBy",
+              "assignedAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "effectivePermissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rolePermissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "userId": {
+                "type": "integer"
+              },
+              "userName": {
+                "type": "string"
+              },
+              "permissionId": {
+                "type": "integer"
+              },
+              "permissionName": {
+                "type": "string"
+              },
+              "moduleKey": {
+                "type": "string"
+              },
+              "granted": {
+                "type": "boolean"
+              },
+              "grantedByName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "grantedAt": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "userId",
+              "userName",
+              "permissionId",
+              "permissionName",
+              "moduleKey",
+              "granted",
+              "grantedByName",
+              "grantedAt",
+              "expiresAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": true,
+                "minimum": 0
+              },
+              "userId": {
+                "type": "integer",
+                "exclusiveMinimum": true,
+                "minimum": 0
+              },
+              "userName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "deviceKey": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "loginAt": {
+                "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+              },
+              "expiresAt": {
+                "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+              },
+              "logoutAt": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revokedAt": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "ipAddress": {
+                "type": "string",
+                "minLength": 1
+              },
+              "userAgent": {
+                "type": "string",
+                "minLength": 1
+              },
+              "device": {
+                "type": "string",
+                "minLength": 1
+              },
+              "isValid": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "userId",
+              "userName",
+              "deviceKey",
+              "loginAt",
+              "expiresAt",
+              "logoutAt",
+              "revokedAt",
+              "ipAddress",
+              "userAgent",
+              "device",
+              "isValid"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mfa": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "integer",
+                  "exclusiveMinimum": true,
+                  "minimum": 0
+                },
+                "userName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "totp"
+                  ]
+                },
+                "confirmedAt": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "lastUsedAt": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/userDetailSchema/properties/user/properties/passwordChangedAt/anyOf/0"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "recoveryCodesLeft": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "userId",
+                "userName",
+                "method",
+                "confirmedAt",
+                "enabled",
+                "lastUsedAt",
+                "recoveryCodesLeft"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "user",
+        "extraRoles",
+        "effectivePermissions",
+        "rolePermissions",
+        "overrides",
+        "sessions",
+        "mfa"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "userId",
+    "isActive"
+  ],
+  "additionalProperties": false
+}

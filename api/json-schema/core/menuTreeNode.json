@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "urlPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "order": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "icon": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "externalHref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "idCoreModules": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/menuTreeNodeSchema"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "urlPath",
+    "order",
+    "icon",
+    "externalHref",
+    "idCoreModules",
+    "children"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "menuTreeNodeSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "urlPath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "externalHref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idCoreModules": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/menuTreeNodeSchema"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "urlPath",
+        "order",
+        "icon",
+        "externalHref",
+        "idCoreModules",
+        "children"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

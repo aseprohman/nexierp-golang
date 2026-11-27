@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "userId": {
+      "type": "integer"
+    },
+    "userName": {
+      "type": "string"
+    },
+    "permissionId": {
+      "type": "integer"
+    },
+    "permissionName": {
+      "type": "string"
+    },
+    "moduleKey": {
+      "type": "string"
+    },
+    "granted": {
+      "type": "boolean"
+    },
+    "grantedByName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "grantedAt": {
+      "type": "string"
+    },
+    "expiresAt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "userId",
+    "userName",
+    "permissionId",
+    "permissionName",
+    "moduleKey",
+    "granted",
+    "grantedByName",
+    "grantedAt",
+    "expiresAt"
+  ],
+  "additionalProperties": false
+}

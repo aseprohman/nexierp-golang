@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "entityId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "code": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "deskripsi": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "icon": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tone": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "urutan": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AKTIF",
+        "NONAKTIF"
+      ]
+    },
+    "version": {
+      "type": "number"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "$ref": "#/definitions/coreClusterViewSchema/properties/createdAt"
+    },
+    "jumlahModul": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "id",
+    "entityId",
+    "code",
+    "nama",
+    "urutan",
+    "status",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "jumlahModul"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "coreClusterViewSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "entityId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string"
+        },
+        "nama": {
+          "type": "string"
+        },
+        "deskripsi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "urutan": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "AKTIF",
+            "NONAKTIF"
+          ]
+        },
+        "version": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/coreClusterViewSchema/properties/createdAt"
+        },
+        "jumlahModul": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "entityId",
+        "code",
+        "nama",
+        "urutan",
+        "status",
+        "version",
+        "createdAt",
+        "updatedAt",
+        "jumlahModul"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

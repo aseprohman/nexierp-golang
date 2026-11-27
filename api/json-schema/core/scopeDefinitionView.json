@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "module_id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "scope_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "label": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "target_table": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "target_field": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "operator": {
+      "type": "string",
+      "enum": [
+        "in"
+      ]
+    },
+    "is_active": {
+      "type": "boolean"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "module_id",
+    "scope_key",
+    "label",
+    "description",
+    "target_table",
+    "target_field",
+    "operator",
+    "is_active",
+    "version",
+    "created_at"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "scope": {
+      "type": "string",
+      "maxLength": 48
+    },
+    "search": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "idCoreModules": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "idKategori": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "default": 50
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "type": "string"
+    },
+    {
+      "type": "number"
+    },
+    {
+      "type": "boolean"
+    },
+    {
+      "type": "null"
+    },
+    {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/jsonValueSchema"
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/jsonValueSchema"
+      }
+    }
+  ],
+  "definitions": {
+    "jsonValueSchema": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/jsonValueSchema"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/jsonValueSchema"
+          }
+        }
+      ]
+    }
+  }
+}

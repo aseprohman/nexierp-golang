@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "kode": {
+      "type": "string"
+    },
+    "nama": {
+      "type": "string"
+    },
+    "kodePos": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "idCoreKecamatan": {
+      "type": "integer"
+    },
+    "kecamatanNama": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "kode",
+    "nama",
+    "kodePos",
+    "idCoreKecamatan",
+    "kecamatanNama",
+    "version"
+  ],
+  "additionalProperties": false
+}

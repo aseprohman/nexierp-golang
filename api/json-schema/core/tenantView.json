@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "exclusiveMinimum": true,
+      "minimum": 0
+    },
+    "entityId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "kode": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paketTier": {
+      "type": "string",
+      "enum": [
+        "PS1",
+        "PS2",
+        "PS3"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PROVISI",
+        "AKTIF",
+        "DITANGGUHKAN",
+        "DITUTUP"
+      ]
+    },
+    "maxUsers": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "maxLokasi": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kontakEmail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kontakTelepon": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "versiSkema": {
+      "type": "integer"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "$ref": "#/definitions/tenantViewSchema/properties/createdAt"
+    },
+    "deletedAt": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/tenantViewSchema/properties/createdAt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "entityId",
+    "kode",
+    "nama",
+    "paketTier",
+    "status",
+    "maxUsers",
+    "maxLokasi",
+    "kontakEmail",
+    "kontakTelepon",
+    "versiSkema",
+    "version",
+    "createdAt",
+    "updatedAt",
+    "deletedAt"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "tenantViewSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+        },
+        "entityId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nama": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paketTier": {
+          "type": "string",
+          "enum": [
+            "PS1",
+            "PS2",
+            "PS3"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PROVISI",
+            "AKTIF",
+            "DITANGGUHKAN",
+            "DITUTUP"
+          ]
+        },
+        "maxUsers": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxLokasi": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kontakEmail": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kontakTelepon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "versiSkema": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "$ref": "#/definitions/tenantViewSchema/properties/createdAt"
+        },
+        "deletedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/tenantViewSchema/properties/createdAt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "entityId",
+        "kode",
+        "nama",
+        "paketTier",
+        "status",
+        "maxUsers",
+        "maxLokasi",
+        "kontakEmail",
+        "kontakTelepon",
+        "versiSkema",
+        "version",
+        "createdAt",
+        "updatedAt",
+        "deletedAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

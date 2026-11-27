@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 150
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "telepon": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "sandi": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 72
+    }
+  },
+  "required": [
+    "email",
+    "nama",
+    "sandi"
+  ],
+  "additionalProperties": false
+}
